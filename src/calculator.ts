@@ -281,7 +281,7 @@ export const setupCalculator = (display_screen: HTMLDivElement, output_display: 
 
       if (result !== 'SyntaxError') {
         // Update output string and input string with the result
-        output_string = inp_string + '=' + result
+        output_string = inp_string + '='
         input_string = '' + result.toString()
         input_display.innerHTML = input_string
         output_display.innerHTML = output_string
