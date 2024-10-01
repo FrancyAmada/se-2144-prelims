@@ -320,11 +320,13 @@ export const setupCalculator = (display_screen: HTMLDivElement, output_display: 
    */
   const onClickByeButton = () => {
     const goodbye_word: string = 'Goodbye...'
-
     // Proceed only if the calculator is turned on
     if (turned_on) {
       // Reset the calculator's input
       onClickACButton(turned_on)
+
+      // Turn the calculator off so no inputs register
+      turned_on = false
 
       // Initialize the index for the goodbye message
       let index: number = 0
@@ -341,7 +343,7 @@ export const setupCalculator = (display_screen: HTMLDivElement, output_display: 
 
             // Turn off the calculator after a brief delay
             setTimeout(() => {
-              setPower(false)
+              setPower(turned_on)
             }, 800)
           }
       }, 100)

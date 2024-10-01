@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -16,9 +18,11 @@
 body {
   margin: 0;
   display: flex;
-  place-items: center;
+  justify-content: center;
+  align-items: center;
   min-width: 320px;
   min-height: 100vh;
+  background: linear-gradient(145deg, #4e4c47, #282725);
 }
 
 .calculator {
@@ -30,7 +34,7 @@ body {
   align-content: center;
   border: 0.5vh solid #1a1a1a;
   border-radius: 4vh;
-  box-shadow: 4vh 4vh 6vh 6vh #8cead1;
+  box-shadow: 1vh 1vh 4vh rgba(0, 0, 0, 0.5), inset -0.5vh -0.5vh 2vh rgba(255, 255, 255, 0.2); /* Adds inner and outer shadow for 3D effect */
 }
 
 .calculator-head {
@@ -45,6 +49,8 @@ p.calculator-model {
   align-items: left;
   margin: 4vh 0px 6.5vh 4.5vh;
   font-size: 3vh;
+  font-family: "Arial", sans-serif;
+  color: #ffffff;
 }
 
 .calculator-screen {
@@ -53,6 +59,10 @@ p.calculator-model {
   margin: 1.5vh 4vh;
   border: 0.3vh solid #7e7d7d;
   border-radius: 2vh;
+  box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.5), 0 4px 10px rgba(0, 0, 0, 0.3);
+  position: relative;
+  overflow: hidden;
+  padding: 1vh;
 }
 
 .calculator-screen.off {
@@ -62,17 +72,19 @@ p.calculator-model {
 div.display-history {
   min-height: 4.5vh;
   text-align: right;
-  padding: 2vh 1.9vh 0px 1.9vh;
+  padding: 2.5vh 2vh 0px 1.9vh;
   font-size: 3.5vh;
   color: #909090;
+  font-family: 'Orbitron', sans-serif; /* Calculator style font */
 }
 
 div.display-result {
   min-height: 5.5vh;
   text-align: right;
-  padding: 2vh 4vh 0px 4vh;
-  font-size: 6.5vh;
+  padding: 4.75vh 4vh 0px 4vh;
+  font-size: 5vh;
   color: #f9f9f9;
+  font-family: 'Orbitron', sans-serif; /* Calculator style font */
 }
 
 .calculator-body {
@@ -80,6 +92,7 @@ div.display-result {
   display: grid;
   grid-template-columns: auto auto auto auto;
   padding: 5vh 4vh 10vh;
+  gap: 1vh;
 }
 
 .logo.backspace {
@@ -88,71 +101,92 @@ div.display-result {
 }
 
 .btn {
-  width: 11vh;
-  height: 6.5vh;
+  min-width: 11vh;
+  min-height: 6.5vh;
   font-size: 3.5vh;
   border-radius: 8px;
-  border: 1px solid transparent;
+  border: none;
   margin: 0.75vw auto;
   font-weight: 500;
   font-family: inherit;
   background-color: #1a1a1a;
   cursor: pointer;
-  transition: border-color 0.25s;
+  box-shadow: 0 4px 0 #0f0f0f, 0 4px 6px rgba(0, 0, 0, 0.5);
+  transition: all 0.25s ease-in-out;
+  color: white;
 }
 
 .btn:hover {
-  border-width: 2px;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 #0f0f0f, 0 6px 8px rgba(0, 0, 0, 0.4);
+}
+
+.btn:active {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 #0f0f0f, 0 2px 4px rgba(0, 0, 0, 0.6);
 }
 
 .btn.num-key,
 .btn.period-key {
   background-color: #807b7b;
+  box-shadow: 0 4px 0 #696767, 0 4px 6px rgba(0, 0, 0, 0.4);
 }
 
 .btn.op-key {
   background-color: #565555;
+  box-shadow: 0 4px 0 #454444, 0 4px 6px rgba(0, 0, 0, 0.4);
 }
 
 .btn.equal-key {
   background-color: #e68429;
+  box-shadow: 0 4px 0 #b3661d, 0 4px 6px rgba(0, 0, 0, 0.4);
 }
 
 .btn.clear-key {
   background-color: #b8681d;
+  box-shadow: 0 4px 0 #934b16, 0 4px 6px rgba(0, 0, 0, 0.4);
 }
 
 .btn.special-key {
   background-color: #565555;
   color: #31c313;
+  box-shadow: 0 4px 0 #454444, 0 4px 6px rgba(0, 0, 0, 0.4);
 }
 
 .btn.num-key:hover,
 .btn.period-key:hover {
   background-color: #dadae4;
-  border-color: #b1b1bc;
+  box-shadow: 0 6px 0 #b1b1bc, 0 6px 8px rgba(0, 0, 0, 0.4);
+  color: #1a1a1a;
+}
+
+.btn.num-key:active,
+.btn.period-key:active {
+  background-color: #d7d7f7;
+  box-shadow: 0 2px 0 #afafbe, 0 2px 4px rgba(0, 0, 0, 0.4);
   color: #1a1a1a;
 }
 
 .btn.op-key:hover {
   background-color: #a0a0aa;
-  border-color: #7e7e86;
+  box-shadow: 0 6px 0 #7e7e86, 0 6px 8px rgba(0, 0, 0, 0.4);
   color: #1a1a1a;
 }
+
 .btn.special-key:hover {
   background-color: #a0a0aa;
-  border-color: #7e7e86;
+  box-shadow: 0 6px 0 #7e7e86, 0 6px 8px rgba(0, 0, 0, 0.4);
   color: #199600;
 }
 
 .btn.clear-key:hover {
   background-color: #965417;
-  border-color: #78481a;
+  box-shadow: 0 6px 0 #78481a, 0 6px 8px rgba(0, 0, 0, 0.4);
 }
 
 .btn.equal-key:hover {
   background-color: #e68429;
-  border-color: #c8701d;
+  box-shadow: 0 6px 0 #c8701d, 0 6px 8px rgba(0, 0, 0, 0.4);
 }
 
 #app {
@@ -162,10 +196,10 @@ div.display-result {
   text-align: center;
 }
 
-button:focus,
+/* button:focus,
 button:focus-visible {
   outline: 8px auto -webkit-focus-ring-color;
-}
+} */
 
 @media (prefers-color-scheme: light) {
   :root {
