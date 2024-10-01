@@ -126,27 +126,31 @@ export const setupCalculator = (display_screen: HTMLDivElement, output_display: 
    * Also handles special cases like clearing the input if there is a syntax error or a greeting (on_hello).
    */
   const onClickDeleteButton = () => {
-    // If there is a syntax error or a greeting being displayed, clear the input and reset the on_hello flag
+    // If there is a syntax error or a greeting message, clear the input and reset the on_hello flag
     if (input_string === 'SyntaxError' || on_hello) {
-      input_string = ''
-      on_hello = false
+        input_string = '';
+        on_hello = false;
     }
 
-    // If the input string is not empty and the device is turned on, delete the last character
+    // If the input string is not empty and the device is turned on, proceed to delete the last character
     if (input_string.length > 0 && turned_on) {
-      var last_input_character = input_string.substring(input_string.length - 1, input_string.length)
-      if (last_input_character == ')') {
-        on_parenthesis = true
+        var last_input_character = input_string.substring(input_string.length - 1);
 
-      } else if (last_input_character == '-' && on_parenthesis) {
-        input_string = input_string.substring(0, input_string.length - 1)
-        on_parenthesis = false
+        // If the last character is a closing parenthesis, set the on_parenthesis flag to true
+        if (last_input_character === ')') {
+            on_parenthesis = true;
 
-      }
-      // Remove the last character from the input string
-      input_string = input_string.substring(0, input_string.length - 1)
-      
-      input_display.innerHTML = input_string
+        // If the last character is a minus sign and parentheses are active, remove the minus sign and reset the on_parenthesis flag
+        } else if (last_input_character === '-' && on_parenthesis) {
+            input_string = input_string.substring(0, input_string.length - 1);
+            on_parenthesis = false;
+        }
+
+        // Remove the last character from the input string
+        input_string = input_string.substring(0, input_string.length - 1);
+
+        // Update the display with the modified input string
+        input_display.innerHTML = input_string;
     }
   }
 
@@ -159,28 +163,31 @@ export const setupCalculator = (display_screen: HTMLDivElement, output_display: 
    * @returns {number | void} - Returns `-1` if adding a decimal point is invalid (e.g., when there's no number or there's already a decimal in the last number).
    */
   const onClickPeriodButton = () => {
-    // Use a regular expression to match the last number in the input string (with or without a decimal)
+    // Ensure the device is turned on before proceeding
     if (turned_on) {
-      const last_number_match = input_string.match(/(\d+\.?\d*)$/);
-      var last_number: string
-      // If no number is found at the end of the input, return -1 (invalid case)
-      if (!last_number_match) {
-        input_string += '0'
-        last_number = '0'
-      } else {
-        last_number = last_number_match[0]
-      }
+        // Use a regular expression to match the last number in the input string (supports numbers with or without a decimal point)
+        const last_number_match = input_string.match(/(\d+\.?\d*)$/);
+        var last_number: string;
 
-      // If the last number already contains a decimal point, return -1 (no need to add another)
-      if (last_number.includes('.')) {
-          return -1;
-      }
-      
-      else if (/\d$/.test(input_string)) {
-        // If the input ends with a digit and the device is turned on, append a decimal point
-        input_string += '.'
-        input_display.innerHTML = input_string
-      }
+        // If no number is found at the end of the input, initialize it with '0'
+        if (!last_number_match) {
+            input_string += '0';
+            last_number = '0';
+        } else {
+            // Set the last matched number as the current last number
+            last_number = last_number_match[0];
+        }
+
+        // Check if the last number already contains a decimal point; if so, there's no need to add another
+        if (last_number.includes('.')) {
+            return -1;
+        }
+        
+        // If the input ends with a digit, append a decimal point and update the display
+        else if (/\d$/.test(input_string)) {
+            input_string += '.';
+            input_display.innerHTML = input_string;
+        }
     }
   }
 
@@ -193,48 +200,55 @@ export const setupCalculator = (display_screen: HTMLDivElement, output_display: 
    */
   const addOperationToInput = (value: string) => {
     
-    // Clear the input if there was a syntax error or a greeting (on_hello), then reset on_hello flag
+    // Clear the input if a syntax error occurred or a greeting (on_hello) was triggered, 
+    // then reset the on_hello flag
     if (input_string === 'SyntaxError' || on_hello) {
-      input_string = ''
-      on_hello = false
+        input_string = ''
+        on_hello = false
     }
 
-    // Get the last character of the input string to check if it's an operator
-    var last_input_character: string = input_string.substring(input_string.length - 1, input_string.length)
+    // Retrieve the last character of the input string to check if it's an operator
+    var last_input_character: string = input_string.substring(input_string.length - 1)
 
-    // Check if the device is turned on, the input string is not empty, and the length is within the max character limit
+    // Ensure the device is turned on, the input is not empty, and the input length is within the allowed limit
     if (input_string.length + 1 < max_character_length && input_string !== '' && turned_on) {
 
-      // If the last character is not an operator, append the operation to the input string
-      if (!['+', '-', '÷', '×'].includes(last_input_character)) {
-        input_string += value
+        // If the last character is not an operator, append the new operation to the input string
+        if (!['+', '-', '÷', '×'].includes(last_input_character)) {
+            input_string += value
 
-      } else if (['+', '-', '÷', '×'].includes(last_input_character)) {
-        if (on_parenthesis) {
-          if (last_input_character === '-' && value === '-') {
-            input_string = input_string.substring(0, input_string.length - 2)
-          } else if (last_input_character === '-' && value !== '-') {
-            input_string = input_string.substring(0, input_string.length - 3) + value
-          } else {
-            input_string += ')'
-          }
-          on_parenthesis = false
-        } else if (value === '-') {
-          input_string += '(-'
-          on_parenthesis = true
-        } else {
-          // If the last character is already an operator, replace it with the new one
-          input_string = input_string.substring(0, input_string.length - 1) + value
+        // Handle cases where the last character is an operator
+        } else if (['+', '-', '÷', '×'].includes(last_input_character)) {
+
+            // Handle special cases for parentheses
+            if (on_parenthesis) {
+                // If the last character is '-' and the new value is '-', adjust the input to avoid consecutive negative signs
+                if (last_input_character === '-' && value === '-') {
+                    input_string = input_string.substring(0, input_string.length - 2)
+                // Handle cases where the last character is '-' but the new value is different
+                } else if (last_input_character === '-' && value !== '-') {
+                    input_string = input_string.substring(0, input_string.length - 3) + value
+                // Close parentheses and reset the flag
+                } else {
+                    input_string += ')'
+                }
+                on_parenthesis = false
+            // If the new value is '-', insert it with parentheses to denote a negative number
+            } else if (value === '-') {
+                input_string += '(-'
+                on_parenthesis = true
+            // Replace the last operator with the new one
+            } else {
+                input_string = input_string.substring(0, input_string.length - 1) + value
+            }
         }
-      }
 
+    // If the input string is empty but the device is turned on, prepend '0' to the operator
     } else if (input_string.length + 1 < max_character_length && input_string === '' && turned_on) {
-      // If the input string is empty, add '0' followed by the operator when turned on
-      input_string = '0' + value
+        input_string = '0' + value
     }
 
     input_display.innerHTML = input_string
-    // console.log(on_parenthesis)
   }
 
 
@@ -284,7 +298,7 @@ export const setupCalculator = (display_screen: HTMLDivElement, output_display: 
           // Limit the result to 10 decimal places
           const limited_precision_result = Number(result.toFixed(10));
 
-          return limited_precision_result.toFixed(10)
+          return limited_precision_result
 
       } else {
           // Throw an error if invalid characters are detected in the expression
@@ -320,7 +334,10 @@ export const setupCalculator = (display_screen: HTMLDivElement, output_display: 
       if (result !== 'SyntaxError' && result !== 'Infinity' && result !== 'NaN') {
         // Update output string and input string with the result
         output_string = inp_string + '='
-        input_string = '' + result.toString()
+        input_string = result.toString()
+        if (input_string.length > 10) {
+          input_string = input_string.substring(0, max_character_length)
+        }
         input_display.innerHTML = input_string
         output_display.innerHTML = output_string
 
