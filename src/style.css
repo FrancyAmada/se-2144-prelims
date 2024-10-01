@@ -26,7 +26,7 @@ body {
 }
 
 .calculator {
-  min-width: 52vh;
+  min-width: 27.5vw;
   background-color: #6b6961;
   flex-wrap: wrap;
   flex: content;
@@ -92,7 +92,6 @@ div.display-result {
   display: grid;
   grid-template-columns: auto auto auto auto;
   padding: 5vh 4vh 10vh;
-  gap: 1vh;
 }
 
 .logo.backspace {
@@ -104,7 +103,7 @@ div.display-result {
   min-width: 11vh;
   min-height: 6.5vh;
   font-size: 3.5vh;
-  border-radius: 8px;
+  border-radius: 2vh;
   border: none;
   margin: 0.75vw auto;
   font-weight: 500;
@@ -192,7 +191,7 @@ div.display-result {
 #app {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 1rem;
   text-align: center;
 }
 

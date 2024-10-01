@@ -17,7 +17,6 @@ export const getRandomHello = () => {
         Italian: "Ciao",
         Chinese: "Nǐ hǎo",
         Japanese: "Konnichiwa",
-        Korean: "Annyeonghaseyo",
         Russian: "Zdravstvuyte",
         Arabic: "Marhaban",
         Hindi: "Namaste",

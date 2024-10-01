@@ -242,7 +242,7 @@ export const setupCalculator = (display_screen: HTMLDivElement, output_display: 
   const calculateExpression = (inp_string: string) => {
     try {
       // Check if the input string contains only valid characters (digits, operators, parentheses, and whitespace)
-      if (/^[\d+\-×÷().\s]+$/.test(inp_string)) {
+      if (/^[\d+\-×÷+.\s]+$/.test(inp_string)) {
         // Replace multiplication and division symbols with standard operators
           inp_string = inp_string.replace('×', '*')
           inp_string = inp_string.replace('÷', '/')
@@ -277,9 +277,9 @@ export const setupCalculator = (display_screen: HTMLDivElement, output_display: 
 
      // Proceed only if the calculator is turned on
     if (turned_on) {
-      // Check if the result is valid (not a syntax error)
 
-      if (result !== 'SyntaxError') {
+      // Check if the result is valid (not a syntax error or infinity)
+      if (result !== 'SyntaxError' && result !== 'Infinity') {
         // Update output string and input string with the result
         output_string = inp_string + '='
         input_string = '' + result.toString()
@@ -287,8 +287,8 @@ export const setupCalculator = (display_screen: HTMLDivElement, output_display: 
         output_display.innerHTML = output_string
 
       } else {
-        // If the result is a syntax error, display the error
-        input_string = result
+        // If the result is an error, always display syntaxError
+        input_string = 'SyntaxError'
         input_display.innerHTML = input_string
       }
     }
