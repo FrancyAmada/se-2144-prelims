@@ -146,23 +146,27 @@ export const setupCalculator = (display_screen: HTMLDivElement, output_display: 
    */
   const onClickPeriodButton = () => {
     // Use a regular expression to match the last number in the input string (with or without a decimal)
-    const lastNumberMatch = input_string.match(/(\d+\.?\d*)$/);
+    if (turned_on) {
+      const last_number_match = input_string.match(/(\d+\.?\d*)$/);
+      var last_number: string
+      // If no number is found at the end of the input, return -1 (invalid case)
+      if (!last_number_match) {
+        input_string += '0'
+        last_number = '0'
+      } else {
+        last_number = last_number_match[0]
+      }
 
-    // If no number is found at the end of the input, return -1 (invalid case)
-    if (!lastNumberMatch) {
-        return -1;
-    }
-
-    const lastNumber = lastNumberMatch[0];
-    // If the last number already contains a decimal point, return -1 (no need to add another)
-    if (lastNumber.includes('.')) {
-        return -1;
-    }
-
-    // If the input ends with a digit and the device is turned on, append a decimal point
-    if (/\d$/.test(input_string) && turned_on) {
-      input_string += '.'
-      input_display.innerHTML = input_string
+      // If the last number already contains a decimal point, return -1 (no need to add another)
+      if (last_number.includes('.')) {
+          return -1;
+      }
+      
+      else if (/\d$/.test(input_string)) {
+        // If the input ends with a digit and the device is turned on, append a decimal point
+        input_string += '.'
+        input_display.innerHTML = input_string
+      }
     }
   }
 
@@ -238,7 +242,7 @@ export const setupCalculator = (display_screen: HTMLDivElement, output_display: 
   const calculateExpression = (inp_string: string) => {
     try {
       // Check if the input string contains only valid characters (digits, operators, parentheses, and whitespace)
-      if (/^[\d+\-*/().\s]+$/.test(inp_string)) {
+      if (/^[\d+\-×÷().\s]+$/.test(inp_string)) {
         // Replace multiplication and division symbols with standard operators
           inp_string = inp_string.replace('×', '*')
           inp_string = inp_string.replace('÷', '/')
