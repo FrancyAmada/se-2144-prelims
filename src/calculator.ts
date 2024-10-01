@@ -8,6 +8,7 @@ export const setupCalculator = (display_screen: HTMLDivElement, output_display: 
 
   var turned_on: boolean = true
   var on_hello: boolean = false
+  var on_parenthesis: boolean = false
 
   var number_buttons: HTMLCollectionOf<Element> = num_buttons
   var input_string: string = ''
@@ -105,6 +106,10 @@ export const setupCalculator = (display_screen: HTMLDivElement, output_display: 
       input_string = ''
       input_display.innerHTML = ''
 
+      if (on_parenthesis) {
+        on_parenthesis = false
+      }
+
       // Clear the output string and update the output display to reflect the empty output
       output_string = ''
       output_display.innerHTML = ''
@@ -129,9 +134,18 @@ export const setupCalculator = (display_screen: HTMLDivElement, output_display: 
 
     // If the input string is not empty and the device is turned on, delete the last character
     if (input_string.length > 0 && turned_on) {
+      var last_input_character = input_string.substring(input_string.length - 1, input_string.length)
+      if (last_input_character == ')') {
+        on_parenthesis = true
+
+      } else if (last_input_character == '-' && on_parenthesis) {
+        input_string = input_string.substring(0, input_string.length - 1)
+        on_parenthesis = false
+
+      }
       // Remove the last character from the input string
       input_string = input_string.substring(0, input_string.length - 1)
-
+      
       input_display.innerHTML = input_string
     }
   }
@@ -178,6 +192,7 @@ export const setupCalculator = (display_screen: HTMLDivElement, output_display: 
    * @param {string} value - The mathematical operation to add to the input string (e.g., '+', '-', '÷', '×').
    */
   const addOperationToInput = (value: string) => {
+    
     // Clear the input if there was a syntax error or a greeting (on_hello), then reset on_hello flag
     if (input_string === 'SyntaxError' || on_hello) {
       input_string = ''
@@ -194,9 +209,23 @@ export const setupCalculator = (display_screen: HTMLDivElement, output_display: 
       if (!['+', '-', '÷', '×'].includes(last_input_character)) {
         input_string += value
 
-      } else {
-        // If the last character is already an operator, replace it with the new one
-        input_string = input_string.substring(0, input_string.length - 1) + value
+      } else if (['+', '-', '÷', '×'].includes(last_input_character)) {
+        if (on_parenthesis) {
+          if (last_input_character === '-' && value === '-') {
+            input_string = input_string.substring(0, input_string.length - 2)
+          } else if (last_input_character === '-' && value !== '-') {
+            input_string = input_string.substring(0, input_string.length - 3) + value
+          } else {
+            input_string += ')'
+          }
+          on_parenthesis = false
+        } else if (value === '-') {
+          input_string += '(-'
+          on_parenthesis = true
+        } else {
+          // If the last character is already an operator, replace it with the new one
+          input_string = input_string.substring(0, input_string.length - 1) + value
+        }
       }
 
     } else if (input_string.length + 1 < max_character_length && input_string === '' && turned_on) {
@@ -205,6 +234,7 @@ export const setupCalculator = (display_screen: HTMLDivElement, output_display: 
     }
 
     input_display.innerHTML = input_string
+    // console.log(on_parenthesis)
   }
 
 
@@ -242,17 +272,19 @@ export const setupCalculator = (display_screen: HTMLDivElement, output_display: 
   const calculateExpression = (inp_string: string) => {
     try {
       // Check if the input string contains only valid characters (digits, operators, parentheses, and whitespace)
-      if (/^[\d+\-×÷+.\s]+$/.test(inp_string)) {
+      if (/^[\d+\-()×÷+.\s]+$/.test(inp_string)) {
         // Replace multiplication and division symbols with standard operators
-          inp_string = inp_string.replace('×', '*')
-          inp_string = inp_string.replace('÷', '/')
+          inp_string = inp_string.replaceAll('×', '*')
+          inp_string = inp_string.replaceAll('÷', '/')
+
+          // console.log(inp_string)
 
           // Evaluate the mathematical expression using eval
           const result = eval(inp_string)
           // Limit the result to 10 decimal places
           const limited_precision_result = Number(result.toFixed(10));
 
-          return limited_precision_result
+          return limited_precision_result.toFixed(10)
 
       } else {
           // Throw an error if invalid characters are detected in the expression
@@ -271,15 +303,21 @@ export const setupCalculator = (display_screen: HTMLDivElement, output_display: 
    * 
    * @param {string} inp_string - The mathematical expression to be evaluated.
    */
-  const onClickEqualButton = (inp_string: string) => { 
+  const onClickEqualButton = (inp_string: string) => {
+    if (on_parenthesis) {
+      inp_string += ')'
+      on_parenthesis = false
+    }
+    
+    // console.log(inp_string)
     // Calculate the result of the input expression
     var result = calculateExpression(inp_string).toString()
-
+    
      // Proceed only if the calculator is turned on
     if (turned_on) {
 
       // Check if the result is valid (not a syntax error or infinity)
-      if (result !== 'SyntaxError' && result !== 'Infinity') {
+      if (result !== 'SyntaxError' && result !== 'Infinity' && result !== 'NaN') {
         // Update output string and input string with the result
         output_string = inp_string + '='
         input_string = '' + result.toString()
